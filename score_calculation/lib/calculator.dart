@@ -172,7 +172,7 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
                 style: ElevatedButton.styleFrom(
                   primary: Colors.red, // Definindo a cor vermelha para o botão
                 ),
-                child: Text('Limpar Campos'),
+                child: Text('Calcular novamente'),
               ),
             ],
           ),
