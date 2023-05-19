@@ -169,6 +169,10 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
                   ),
                 ),
               ),
+              Text(
+                'Produced by: Gregor Yuri',
+                style: TextStyle(fontSize: 11),
+              ),
             ],
           ),
         ),
