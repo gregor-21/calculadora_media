@@ -27,8 +27,8 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
   TextEditingController _notaProva1Controller = TextEditingController();
   TextEditingController _notaProva2Controller = TextEditingController();
   TextEditingController _notaProva3Controller = TextEditingController();
-  String _resultado = '';
-  Color _resultadoColor = Colors.transparent;
+  String _avisoMedia = '';
+  Color _avisoMediaColor = Colors.transparent;
   bool _campoNota3Habilitado = false;
 
   @override
@@ -45,8 +45,9 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
             children: <Widget>[
               Text(
                 'Informe as notas das provas:',
+                style: TextStyle(fontSize: 20, height: 3),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 35),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: TextField(
@@ -65,7 +66,7 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 45),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: TextField(
@@ -90,32 +91,32 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
                 child: Text('Calcular Média'),
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Nota Prova 3:',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    width: 100,
-                    child: TextField(
-                      controller: _notaProva3Controller,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      enabled: _campoNota3Habilitado,
+              Text(
+                _avisoMedia,
+                style: TextStyle(
+                  color: _avisoMediaColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: TextField(
+                  controller: _notaProva3Controller,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Nota Prova 3:',
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
-                ],
+                  enabled: _campoNota3Habilitado,
+                ),
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -127,7 +128,7 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
                         return AlertDialog(
                           title: Text('Aviso'),
                           content: Text(
-                            'Você precisa preencher os campos acima. Pois se zerar alguma prova, não é possível Solicitar a P3 .',
+                            'Você não pode adicionar nota na P3, se ja estiver aprovado ou tiver zerado algumas das provas anteriores.',
                           ),
                           actions: <Widget>[
                             TextButton(
@@ -150,22 +151,7 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
                 },
                 child: Text('Calcular Média com P3'),
               ),
-              SizedBox(height: 20),
-              Container(
-                width: 200,
-                height: 40,
-                color: _resultadoColor,
-                child: Center(
-                  child: Text(
-                    _resultado,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
+              SizedBox(height: 60),
               ElevatedButton(
                 // Botão para limpar os campos
                 onPressed: _limparCampos,
@@ -173,6 +159,19 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
                   primary: Colors.red, // Definindo a cor vermelha para o botão
                 ),
                 child: Text('Calcular novamente'),
+              ),
+              Align(
+                alignment: Alignment
+                    .bottomCenter, // Posicionando no canto inferior da tela
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    '*Para calcular a nota P3, adicione as notas da P1 e P2*',
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -184,19 +183,21 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
   void _calcularMedia() {
     double notaProva1 = double.tryParse(_notaProva1Controller.text) ?? 0;
     double notaProva2 = double.tryParse(_notaProva2Controller.text) ?? 0;
-
+    if (notaProva1 == 0 || notaProva2 == 0) {
+      _campoNota3Habilitado = false;
+    }
     double mediaAtual = (notaProva1 * 0.4) + (notaProva2 * 0.6);
 
     setState(() {
       if (mediaAtual >= 4.96) {
-        _resultado = 'Você está aprovado!';
-        _resultadoColor = Colors.green;
+        _avisoMedia = 'Você está aprovado!';
+        _avisoMediaColor = Colors.green;
       } else {
         if (notaProva2 == 0) {
           double notaProva2Necessaria = (((notaProva1 * 0.4) - 5) / 0.6);
-          _resultado =
+          _avisoMedia =
               'Você precisa tirar ${notaProva2Necessaria.abs().toStringAsFixed(2)} na Prova 2 para ser aprovado.';
-          _resultadoColor = Colors.orange;
+          _avisoMediaColor = Colors.orange;
         } else {
           double notanecessariaP3 = (((notaProva2 * 0.6) - 5) / 0.4);
           double notanecessariaProva3_2 = (((notaProva1 * 0.4) - 5) / 0.6);
@@ -207,19 +208,18 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
             mediaAtual = notanecessariaProva3_2;
           }
           if (mediaAtual >= 4.96) {
-            _resultado = 'Você está aprovado!';
-            _resultadoColor = Colors.green;
+            _avisoMedia = 'Você está aprovado!';
+            _avisoMediaColor = Colors.green;
           } else {
-            _resultado =
+            _avisoMedia =
                 'Você precisa tirar ${mediaAtual.abs().toStringAsFixed(2)} na Prova 3 para ser aprovado.';
-            _resultadoColor = Colors.orange;
+            _avisoMediaColor = Colors.orange;
+            setState(() {
+              _campoNota3Habilitado = notaProva1 > 0 && notaProva2 > 0;
+            });
           }
         }
       }
-    });
-
-    setState(() {
-      _campoNota3Habilitado = notaProva1 > 0 && notaProva2 > 0;
     });
   }
 
@@ -230,14 +230,14 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
 
     setState(() {
       if (mediaComP3 >= 4.96) {
-        _resultado = 'Você está aprovado!';
-        _resultadoColor = Colors.green;
+        _avisoMedia = 'Você está aprovado!';
+        _avisoMediaColor = Colors.green;
       } else if (mediaComP3_2 >= 4.96) {
-        _resultado = 'Você está aprovado!';
-        _resultadoColor = Colors.green;
+        _avisoMedia = 'Você está aprovado!';
+        _avisoMediaColor = Colors.green;
       } else {
-        _resultado = 'Você não conseguiu nota suficiente para a Aprovação.';
-        _resultadoColor = Colors.red;
+        _avisoMedia = 'Você não conseguiu nota suficiente para a Aprovação.';
+        _avisoMediaColor = Colors.red;
       }
     });
   }
@@ -247,8 +247,8 @@ class _MediaCalculatorPageState extends State<MediaCalculatorPage> {
       _notaProva1Controller.clear();
       _notaProva2Controller.clear();
       _notaProva3Controller.clear();
-      _resultado = '';
-      _resultadoColor = Colors.transparent;
+      _avisoMedia = '';
+      _avisoMediaColor = Colors.transparent;
       _campoNota3Habilitado = false;
     });
   }
