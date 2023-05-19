@@ -6,5 +6,5 @@ Após fazer adicionar os campos da P1 e P2, é liberado o campo da P3. Lá você
 
 
 Lembrando que a media das provas do iesb é feita da seguinte maneira: 
-(prova1*0.4)+(prova2*0.6);
+(prova1 x 0.4)+(prova2 x 0.6);
 E a prova substitutiva, a P3 assume a prova1 ou a prova2 de acordo com a maior nota que der a media.
